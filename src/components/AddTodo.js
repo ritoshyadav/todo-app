@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
 const AddTodo = ({ addTodo }) => {
-  const [text, setText] = useState('');
+  const [inputValue, setInputValue] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (text.trim()) {
-      addTodo(text);
-      setText('');
+    if (inputValue.trim()) {
+      addTodo(inputValue.trim());
+      setInputValue('');
     }
   };
 
@@ -15,8 +15,8 @@ const AddTodo = ({ addTodo }) => {
     <form onSubmit={handleSubmit}>
       <input
         type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
         placeholder="Add a new task"
       />
       <button type="submit">Add</button>

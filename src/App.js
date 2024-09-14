@@ -1,49 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import AddTodo from './AddTodo';
-import TodoList from './TodoList';
-import Filter from './Filter';
+import AddTodo from './components/AddTodo';
+import TodoList from './components/TodoList';
+import Filter from './components/Filter';
 
-function App() {
+const App = () => {
   const [todos, setTodos] = useState([]);
   const [filter, setFilter] = useState('all');
 
-  // Fetching the tasks from localStorage when the app loads
+  // useEffect(() => {
+  //   const storedTodos = JSON.parse(localStorage.getItem('todos')) || [];
+  //   setTodos(storedTodos);
+  // }, []);
+  
   useEffect(() => {
-    const savedTodos = JSON.parse(localStorage.getItem('todos')) || [];
-    setTodos(savedTodos);
+    fetch('https://dummyjson.com/todos')
+      .then(response => response.json())
+      .then(data => setTodos(data.todos));
   }, []);
 
-  // Persist tasks to localStorage whenever the todos state changes
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
-  // Add a new todo
   const addTodo = (text) => {
     const newTodo = {
       id: Date.now(),
       text,
-      completed: false
+      completed: false,
     };
-    setTodos([newTodo, ...todos]);
+    setTodos([...todos, newTodo]);
   };
 
-  // Toggle the completion status of a todo
-  const toggleComplete = (id) => {
+  const toggleTodo = (id) => {
     setTodos(
-      todos.map(todo =>
+      todos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
   };
 
-  // Delete a todo
   const deleteTodo = (id) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
-  // Filter tasks based on the selected filter
-  const filteredTodos = todos.filter(todo => {
+  const filteredTodos = todos.filter((todo) => {
     if (filter === 'completed') return todo.completed;
     if (filter === 'pending') return !todo.completed;
     return true;
@@ -51,14 +51,10 @@ function App() {
 
   return (
     <div>
-      <h1>Todo List</h1>
+      <h1>To-Do List</h1>
       <AddTodo addTodo={addTodo} />
       <Filter setFilter={setFilter} />
-      <TodoList
-        todos={filteredTodos}
-        toggleComplete={toggleComplete}
-        deleteTodo={deleteTodo}
-      />
+      <TodoList todos={filteredTodos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
     </div>
   );
 };
